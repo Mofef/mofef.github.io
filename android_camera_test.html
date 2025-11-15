@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Android Chrome Input Bug Test</title>
+    <style>
+        body { font-family: system-ui, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; background: #f0f0f0; }
+        .test-case { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ccc; }
+        h2 { font-size: 1.1rem; margin-top: 0; margin-bottom: 10px; color: #333; }
+        code { background: #eee; padding: 2px 5px; border-radius: 4px; font-size: 0.9rem; display: block; margin-bottom: 10px; word-break: break-all; }
+        .status { margin-top: 10px; font-size: 0.85rem; color: #0066cc; }
+        input[type="file"] { width: 100%; }
+    </style>
+</head>
+<body>
+
+    <h1>Camera/Gallery Selection Test</h1>
+    <p>Test these inputs on Android Chrome to see which triggers the "Camera vs Gallery" chooser.</p>
+
+    <div class="test-case">
+        <h2>1. Standard Image Accept</h2>
+        <code>accept="image/*"</code>
+        <p><em>The default. Often forces the new Photo Picker (no camera tile).</em></p>
+        <input type="file" accept="image/*" id="input1">
+        <div class="status" id="status1"></div>
+    </div>
+
+    <div class="test-case">
+        <h2>2. Force Capture</h2>
+        <code>accept="image/*" capture="environment"</code>
+        <p><em>Usually skips gallery entirely and opens Camera directly.</em></p>
+        <input type="file" accept="image/*" capture="environment" id="input2">
+        <div class="status" id="status2"></div>
+    </div>
+
+    <div class="test-case">
+        <h2>3. Multiple Images</h2>
+        <code>accept="image/*" multiple</code>
+        <p><em>Sometimes triggers a different intent (legacy picker) to allow batch selection.</em></p>
+        <input type="file" accept="image/*" multiple id="input3">
+        <div class="status" id="status3"></div>
+    </div>
+
+    <div class="test-case">
+        <h2>4. Specific Extensions</h2>
+        <code>accept=".jpg, .jpeg, .png"</code>
+        <p><em>Avoids the generic "image/*" wildcard, possibly bypassing the Photo Picker.</em></p>
+        <input type="file" accept=".jpg, .jpeg, .png" id="input4">
+        <div class="status" id="status4"></div>
+    </div>
+
+    <div class="test-case">
+        <h2>5. Mixed Type Workaround</h2>
+        <code>accept="image/*, .pdf"</code>
+        <p><em>Adding a non-image type forces Android to use the generic System File Picker (which usually offers Camera).</em></p>
+        <input type="file" accept="image/*, .pdf" id="input5">
+        <div class="status" id="status5"></div>
+    </div>
+
+    <div class="test-case">
+        <h2>6. Fake MIME Hack</h2>
+        <code>accept="image/*, android/hack"</code>
+        <p><em>A newer hack. Forces the browser to treat this as a generic file request because it doesn't recognize the second MIME type.</em></p>
+        <input type="file" accept="image/*, android/hack" id="input6">
+        <div class="status" id="status6"></div>
+    </div>
+
+    <div class="test-case">
+        <h2>7. No Accept (Control)</h2>
+        <code>(no accept attribute)</code>
+        <p><em>Should always offer Camera, Camcorder, and Files, but offers no filtering.</em></p>
+        <input type="file" id="input7">
+        <div class="status" id="status7"></div>
+    </div>
+
+    <script>
+        // Simple script to provide feedback that a file was selected
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const statusId = input.id.replace('input', 'status');
+                const el = document.getElementById(statusId);
+                if (input.files.length > 0) {
+                    el.textContent = `Selected: ${input.files[0].name} (${input.files[0].type})`;
+                } else {
+                    el.textContent = "";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
