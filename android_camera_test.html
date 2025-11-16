@@ -74,6 +74,37 @@
         <div class="status" id="status7"></div>
     </div>
 
+    <h1>more cases</h1>
+    <p>... since on of the above worked within the Home Assistant App (/ its WebView).</p>
+
+    <div class="test-case">
+        <h2>1. Force Camera (User)</h2>
+        <code>accept="image/*" capture="user"</code>
+        <p><em>Tests if the WebView can handle a direct camera capture intent.</em></p>
+        <input type="file" accept="image/*" capture="user">
+    </div>
+
+    <div class="test-case">
+        <h2>2. Force Camera (Environment)</h2>
+        <code>accept="image/*" capture="environment"</code>
+        <p><em>Same as above, but for the rear camera.</em></p>
+        <input type="file" accept="image/*" capture="environment">
+    </div>
+
+    <div class="test-case">
+        <h2>3. Force Video Capture</h2>
+        <code>accept="video/*" capture="user"</code>
+        <p><em>Tests if it's an image-only issue. Does it handle video?</em></p>
+        <input type="file" accept="video/*" capture="user">
+    </div>
+
+    <div class="test-case">
+        <h2>4. No Accept Attribute</h2>
+        <code>(no accept attribute)</code>
+        <p><em>What is the default file picker? Does *it* have a camera option?</em></p>
+        <input type="file">
+    </div>
+
     <script>
         // Simple script to provide feedback that a file was selected
         document.querySelectorAll('input[type="file"]').forEach(input => {
